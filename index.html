@@ -869,7 +869,7 @@ arcBoard.forEach((e,i)=>{const y=124+i*32,me=arc&&i===arc.rank,c=me?'#ffe27a':i=
 tx((i+1)+'.',cols[0],y,20,c,4);tx(e.n,cols[1],y,22,c,4);tx(String(e.s),cols[2],y,22,c,4);tx(((CH[e.ch]||{}).nm||'?')+(e.w?' ★':''),cols[3],y,17,c,4);tx(String(e.c||0),cols[4],y,20,c,4)});
 mbtn(arcBack==='options'?'ZURÜCK':'ZUM TITEL',W/2,H-36,260,42,()=>{arc=null;if(arcBack==='options')sS('options');else toTitle(0)},{fs:20,i:0})}
 /* ---------- News-Popup auf dem Startbildschirm ---------- */
-const GAME_V='0.185',NEWS_V='2026-11-arcade';function drawVer(){x.save();x.font='14px '+F;x.textAlign='right';x.textBaseline='bottom';x.lineWidth=4;x.strokeStyle='#000';x.lineJoin='round';x.strokeText('Version '+GAME_V,W-12,H-8);x.fillStyle='#cfc6e6';x.fillText('Version '+GAME_V,W-12,H-8);x.restore()}let newsOpen=true,newsT0=0;try{if(localStorage.getItem('lackpow_news')===NEWS_V)newsOpen=false}catch(e){}
+const GAME_V='0.186',NEWS_V='2026-11-arcade';function drawVer(){x.save();x.font='14px '+F;x.textAlign='right';x.textBaseline='bottom';x.lineWidth=4;x.strokeStyle='#000';x.lineJoin='round';x.strokeText('Version '+GAME_V,W-12,H-8);x.fillStyle='#cfc6e6';x.fillText('Version '+GAME_V,W-12,H-8);x.restore()}let newsOpen=true,newsT0=0;try{if(localStorage.getItem('lackpow_news')===NEWS_V)newsOpen=false}catch(e){}
 function newsClose(never){newsOpen=false;lt=performance.now();if(never){try{localStorage.setItem('lackpow_news',NEWS_V)}catch(e){}}}
 const NEWS=[['ARCADE-MODUS FREIGESCHALTET','Kämpf dich in 7 Kämpfen an die Spitze. Mit Continue, Punkten und Bestenliste.','#ffd23a'],['ENDGEGNER INSTALLIERT','Ganz oben im Turm wartet Lackspatz auf dich.','#ff6a3a'],['GEHEIMER GEGNER INSTALLIERT','Nur wer perfekt kämpft, wird ihn finden ...','#7dffb0']];
 function drawNews(){drawVer();if(!newsOpen)return;const te=(performance.now()-tT)/1000;if(te<2.3){newsT0=0;return}if(!newsT0)newsT0=performance.now();const q=Math.min(1,(performance.now()-newsT0)/350),e=eo(q),O=OX();
@@ -947,7 +947,7 @@ function localBackend(){/* Testbetrieb: mehrere Tabs auf demselben Rechner, mit 
  return{set:(p,v)=>(send({t:'set',p,v}),Promise.resolve()),update:(p,v)=>(send({t:'upd',p,v}),Promise.resolve()),remove:p=>(send({t:'set',p,v:null}),Promise.resolve()),
   get:p=>Promise.resolve(getAt(p)===undefined?null:JSON.parse(JSON.stringify(getAt(p)))),
   on:(p,cb)=>{const l={p,cb};L.push(l);setTimeout(()=>{const v=getAt(p);cb(v===undefined?null:v)},0);return()=>{const i=L.indexOf(l);if(i>=0)L.splice(i,1)}},
-  tx:(p,fn)=>{const c=getAt(p),v=fn(c===undefined?null:JSON.parse(JSON.stringify(c)));if(v===undefined)return Promise.resolve({ok:false,v:c});send({t:'set',p,v});return Promise.resolve({ok:true,v})},
+  tx:(p,fn)=>{const c=getAt(p);fn(null);const v=fn(c===undefined?null:JSON.parse(JSON.stringify(c)));if(v===undefined)return Promise.resolve({ok:false,v:c});send({t:'set',p,v});return Promise.resolve({ok:true,v})},
   onDisc:()=>Promise.resolve(),cancelDisc:()=>Promise.resolve()}}
 /* ---------- Oberflaeche ---------- */
 let el=null;
@@ -984,19 +984,19 @@ async function host(pub){for(let n=0;n<8;n++){const c=rcode();const r=await N.tx
  if(!code)throw new Error('Kein freier Raum gefunden.');side=0;await N.remove('rooms/'+code+'/in');await N.remove('rooms/'+code+'/sync');N.onDisc('rooms/'+code,null);await presence();
  if(!pub)show('<h2>RAUM ERSTELLT</h2><p>Gib deinem Freund diesen Code:</p><div class="code">'+code+'</div><p>Warte auf Mitspieler …</p><button class="g" id="ox">ABBRECHEN</button>',{ox:cancel});
  watchMeta()}
-async function join(c){const r=await N.tx('rooms/'+c+'/meta',v=>{if(!v||v.g||v.st!=='wait')return undefined;v.g={ch:myPick,id:myId};return v});
- if(!r.ok)throw new Error('Raum '+c+' gibt es nicht oder er ist schon voll.');code=c;side=1;await presence();subs.push(N.on('rooms/'+c+'/ping',v=>{if(v)N.set('rooms/'+c+'/pong',v)}));show('<h2>RAUM '+c+'</h2><p>Verbunden. Gleich geht es los …</p>',{});watchMeta()}
+async function join(c){const r=await N.tx('rooms/'+c+'/meta',v=>{if(v===null)return null;if(v.g||v.st!=='wait')return undefined;v.g={ch:myPick,id:myId};return v});
+ if(!r.ok||!r.v||!r.v.g||r.v.g.id!==myId)throw new Error('Raum '+c+' gibt es nicht oder er ist schon voll.');code=c;side=1;await presence();subs.push(N.on('rooms/'+c+'/ping',v=>{if(v)N.set('rooms/'+c+'/pong',v)}));show('<h2>RAUM '+c+'</h2><p>Verbunden. Gleich geht es los …</p>',{});watchMeta()}
 async function random(){let take=null;const nc=rcode();
  const r=await N.tx('queue',v=>{take=null;if(v&&v.code&&v.id!==myId&&Date.now()-(v.t||0)<45000){take=v.code;return null}return{code:'?',id:myId,t:Date.now()}});
  if(take){try{await join(take);return}catch(e){}}
  await host(true);await N.set('queue',{code,id:myId,t:Date.now()});N.onDisc('queue',null);
- const iv=setInterval(()=>{if(!code||meta&&meta.g){clearInterval(iv);return}N.tx('queue',v=>v&&v.id===myId?{code,id:myId,t:Date.now()}:undefined)},15000);subs.push(()=>clearInterval(iv))}
+ const iv=setInterval(()=>{if(!code||meta&&meta.g){clearInterval(iv);return}N.tx('queue',v=>v===null?null:v.id===myId?{code,id:myId,t:Date.now()}:undefined)},15000);subs.push(()=>clearInterval(iv))}
 async function presence(){const p='rooms/'+code+'/p/'+side;await N.set(p,1);N.onDisc(p,null);let seen=false;
  subs.push(N.on('rooms/'+code+'/p/'+(1-side),v=>{if(v)seen=true;else if(seen&&!leftShown)gone()}))}
 function gone(){leftShown=true;active=false;toast('');restore();show('<h2>VERBINDUNG WEG</h2><p>Dein Gegner hat das Spiel verlassen.</p><button id="om">HAUPTMENÜ</button>',{om:leave})}
 function watchMeta(){subs.push(N.on('rooms/'+code+'/meta',v=>{meta=v;if(!v){if(side===1&&!leftShown&&code)gone();return}
  if(v.go&&v.go.n>matchN)begin(v.go);
- if(side===0&&!going&&v.g&&v.st==='wait'){going=1;N.update('rooms/'+code+'/meta',{st:'ping'});if(v.pub)N.tx('queue',q=>q&&q.code===code?null:undefined);measure().then(d=>go(d))}
+ if(side===0&&!going&&v.g&&v.st==='wait'){going=1;N.update('rooms/'+code+'/meta',{st:'ping'});if(v.pub)N.tx('queue',q=>q===null||q.code===code?null:undefined);measure().then(d=>go(d))}
  else if(side===0&&!going&&v.st==='play'&&v.rm&&v.go&&v.rm[0]===v.go.n&&v.rm[1]===v.go.n){going=1;setTimeout(()=>go(v.D,true),0)}}))}
 async function measure(){const rt=[];let n=0;const t0={};const un=N.on('rooms/'+code+'/pong',v=>{if(v&&t0[v]){rt.push(performance.now()-t0[v]);delete t0[v]}});
  for(;n<4;n++){const k='k'+n+myId;t0[k]=performance.now();await N.set('rooms/'+code+'/ping',k);await new Promise(r=>setTimeout(r,350))}un();
@@ -1049,7 +1049,7 @@ function rematch(){if(!code||!meta)return;msg='WARTE AUF GEGNER …';const r=Obj
 function leave(){cleanup();hide();toast('');mode='arcade';ban=null;toTitle(1)}
 function cleanup(){active=false;subs.forEach(u=>{try{u()}catch(e){}});subs=[];if(inSub){inSub();inSub=null}if(syncSub){syncSub();syncSub=null}
  if(N&&code){const c=code;N.remove('rooms/'+c+'/p/'+side);if(side===0)N.remove('rooms/'+c);else N.update('rooms/'+c+'/meta',{g:null,st:'gone'})}
- if(N&&intent&&intent.t==='random')N.tx('queue',q=>q&&q.id===myId?null:undefined);
+ if(N&&intent&&intent.t==='random')N.tx('queue',q=>q===null||q.id===myId?null:undefined);
  restore();code=null;side=-1;meta=null;matchN=0;leftShown=false;over=false}
 return{open,picked,tick,ni,rematch,leave,on:()=>active,side:()=>side,isOn:()=>mode==='online',cur:()=>cur,overBtns:()=>[['REVANCHE',rematch],['HAUPTMENÜ',leave]],dbg:()=>({rk:Object.keys(rem).join(','),rv:Object.values(rem).join(','),mk:Object.keys(my).join(','),mn:matchN,lc:lastCap,side,code,nf,D,active,S,fixes,hash:P&&E?hash():''})}})();
 function NI(s){if(mode==='online'&&ONL.cur())ONL.ni(s)}
