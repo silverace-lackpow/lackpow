@@ -46,7 +46,7 @@ function kh(e){e.stopImmediatePropagation();e.preventDefault();skip=1;chk()}func
 addEventListener('keydown',kh,true);addEventListener('pointerdown',ph,true);addEventListener('load',()=>{ld=1;chk()});setTimeout(chk,100)})();</script>
 <canvas id="c" width="800" height="528"></canvas>
 <div class="c" id="dp"><i class="r" style="left:75.0%;top:38.0%"><span style="display:block;transform:rotate(90deg)">▲</span></i><i class="dr" style="left:64.2%;top:64.2%"><span style="display:block;transform:rotate(135deg)">▲</span></i><i class="d" style="left:38.0%;top:75.0%"><span style="display:block;transform:rotate(180deg)">▲</span></i><i class="dl" style="left:11.8%;top:64.2%"><span style="display:block;transform:rotate(225deg)">▲</span></i><i class="l" style="left:1.0%;top:38.0%"><span style="display:block;transform:rotate(270deg)">▲</span></i><i class="ul" style="left:11.8%;top:11.8%"><span style="display:block;transform:rotate(315deg)">▲</span></i><i class="u" style="left:38.0%;top:1.0%"><span style="display:block;transform:rotate(360deg)">▲</span></i><i class="ur" style="left:64.2%;top:11.8%"><span style="display:block;transform:rotate(405deg)">▲</span></i><b></b></div>
-<div class="c" id="ab"><button data-k="p">👊<small>HART</small></button><button data-k="k">🦵<small>HART</small></button><button data-k="q">👊<small>LEICHT</small></button><button data-k="g">🦵<small>LEICHT</small></button></div>
+<div class="c" id="ab"><button data-k="p">👊<small>HART</small></button><button data-k="k">🦵<small>HART</small></button><button data-k="q">👊<small>LEICHT</small></button><button data-k="g">🦵<small>LEICHT</small></button><button id="rgb">🔥<small>RAGE</small></button></div><style>#ab #rgb{display:none;left:50%;top:calc(var(--b)*-1.32);transform:translateX(-50%);border-color:#ff2a10;background:#5a0800d0;box-shadow:0 0 18px #ff3a10;animation:rgbp .7s infinite alternate}#ab #rgb small{color:#ffd0a0}@keyframes rgbp{from{box-shadow:0 0 8px #ff3a10}to{box-shadow:0 0 26px #ff7a20,0 0 6px #fff}}</style>
 <button id="pb">II</button>
 <div id="rot"><div class="ph"></div><div>Bitte drehe dein Handy<br>ins Querformat</div></div>
 <script>
@@ -409,7 +409,7 @@ addEventListener('keydown',e=>{if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown
 const k=KM[e.key];if(k==='p'||k==='q')HLD[k]=1;if((S==='fight'||S==='intro'||S==='fin')&&!paused&&k){inp[k]=1;if(!e.repeat&&(k==='p'||k==='q'))MP++}if(e.repeat&&S!=='fight')return;onKey(e.key)});
 addEventListener('keyup',e=>{const k=KM[e.key];if(k==='p'||k==='q')HLD[k]=0;if(k==='l'||k==='r'||k==='d')inp[k]=0});
 document.querySelectorAll('#ab button').forEach(b=>{const k=b.dataset.k;b.addEventListener('pointerdown',e=>{e.preventDefault();if(k==='p'||k==='q')HLD[k]=1;if(!paused){inp[k]=1;if(k==='p'||k==='q')MP++}});['pointerup','pointercancel','pointerleave'].forEach(n=>b.addEventListener(n,()=>{if(k==='p'||k==='q')HLD[k]=0}))});
-const pb=document.getElementById('pb');pb.addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();togglePause()});
+const rgbEl=document.getElementById('rgb');rgbEl.addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();if(!paused&&S==='fight'&&P&&(P.rg||0)>=100&&!P.rage)inp.x23=1});const pb=document.getElementById('pb');pb.addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();togglePause()});
 addEventListener('pointerdown',onTap);
 function cpos(e){const r=cv.getBoundingClientRect();return[(e.clientX-r.left)*cv.width/r.width,(e.clientY-r.top)*H/r.height]}
 function onTap(e){if(e.target&&e.target.closest&&e.target.closest('#ab,#dp,#pb'))return;
@@ -1006,7 +1006,7 @@ tx((i+1)+'.',cols[0],y,19,c,4);tx(String(e.n||'???').slice(0,3),cols[1],y,21,c,4
 if(bTab===2){tx(String(e.r|0),cols[2],y,21,c,4);tx(String(e.w|0),cols[3],y,19,c,4);tx(String(e.l|0),cols[4],y,19,c,4)}
 else{tx(String(e.s|0),cols[2],y,21,c,4);tx(((CH[e.ch]||{}).nm||'?')+(e.w?' ★':''),cols[3],y,16,c,4);tx(String(e.c||0),cols[4],y,19,c,4)}});}
 /* ---------- News-Popup auf dem Startbildschirm ---------- */
-const GAME_V='0.240',NEWS_V='2026-11-arcade';function drawVer(){x.save();x.font='14px '+F;x.textAlign='right';x.textBaseline='bottom';x.lineWidth=4;x.strokeStyle='#000';x.lineJoin='round';x.strokeText('Version '+GAME_V,W-12,H-8);x.fillStyle='#cfc6e6';x.fillText('Version '+GAME_V,W-12,H-8);x.restore()}let newsOpen=true,newsT0=0;try{if(localStorage.getItem('lackpow_news')===NEWS_V)newsOpen=false}catch(e){}
+const GAME_V='0.241',NEWS_V='2026-11-arcade';function drawVer(){x.save();x.font='14px '+F;x.textAlign='right';x.textBaseline='bottom';x.lineWidth=4;x.strokeStyle='#000';x.lineJoin='round';x.strokeText('Version '+GAME_V,W-12,H-8);x.fillStyle='#cfc6e6';x.fillText('Version '+GAME_V,W-12,H-8);x.restore()}let newsOpen=true,newsT0=0;try{if(localStorage.getItem('lackpow_news')===NEWS_V)newsOpen=false}catch(e){}
 function newsClose(never){newsOpen=false;lt=performance.now();if(never){try{localStorage.setItem('lackpow_news',NEWS_V)}catch(e){}}}
 const NEWS=[['ARCADE-MODUS FREIGESCHALTET','Kämpf dich in 7 Kämpfen an die Spitze. Mit Continue, Punkten und Bestenliste.','#ffd23a'],['ENDGEGNER INSTALLIERT','Ganz oben im Turm wartet Lackspatz auf dich.','#ff6a3a'],['GEHEIMER GEGNER INSTALLIERT','Nur wer perfekt kämpft, wird ihn finden ...','#7dffb0']];
 function drawNews(){drawVer();if(!newsOpen)return;const te=(performance.now()-tT)/1000;if(te<2.3){newsT0=0;return}if(!newsT0)newsT0=performance.now();const q=Math.min(1,(performance.now()-newsT0)/350),e=eo(q),O=OX();
@@ -1402,11 +1402,11 @@ function fwDraw(){FWQ.forEach(q=>{const V=q.o.img,n=['fx1','fx2','fx3'][Math.flo
 let trRage=false;try{trRage=localStorage.getItem('lackpow_trrage')==='1'}catch(e){}
 function trRageT(){trRage=!trRage;try{localStorage.setItem('lackpow_trrage',trRage?'1':'0')}catch(e){}}
 /* ---------- main loop ---------- */
-const TICK=1/60;let acc=0,last=performance.now(),pr=null,hd=null,pv=null;const rotEl=document.getElementById('rot');
+const TICK=1/60;let rgbV=null,acc=0,last=performance.now(),pr=null,hd=null,pv=null;const rotEl=document.getElementById('rot');
 function loop(t){{const por=innerHeight>innerWidth&&matchMedia('(pointer:coarse)').matches;if(por!==pr){pr=por;rotEl.style.display=por?'flex':'none'}if(por){last=t;requestAnimationFrame(loop);return}}
 const fdt=Math.min(.1,Math.max(0,(t-last)/1000));last=t;musUpd(fdt);sndUpd();
 {const inG=S==='intro'||S==='fight'||S==='end'||S==='fin'||S==='fxk'||S==='dk',hide=!inG||paused;if(hide!==hd){hd=hide;document.querySelectorAll('.c').forEach(e=>e.style.display=hide?'none':'')}
-const sh=inG||paused;if(sh!==pv){pv=sh;pb.style.display=sh?'block':'none'}}
+{const rr=S==='fight'&&!paused&&P&&(P.rg||0)>=100&&!P.rage;if(rr!==rgbV){rgbV=rr;rgbEl.style.display=rr?'flex':'none'}if(!rr&&P)inp.x23=0}const sh=inG||paused;if(sh!==pv){pv=sh;pb.style.display=sh?'block':'none'}}
 if(ONL.on()){acc=0;ONL.tick(fdt)}else if(paused)acc=0;else{acc+=fdt;while(acc>=TICK){step(TICK);acc-=TICK}}
 hits=[];x.save();x.translate((Math.random()-.5)*shake,(Math.random()-.5)*shake);shake*=.85;
 if(S==='title'){drawTitle(Math.min(.033,fdt));drawNews()}else if(S==='options')drawOptions();else if(S==='ready')drawSelect();else if(S==='stage')drawStage();else if(S==='ladder')drawLadder();else if(S==='aend')drawAEnd();else if(S==='csec')drawCsec();else if(S==='astory')drawAStory();else if(S==='dk')drawDK();else if(S==='name')drawName();else if(S==='board')drawBoard();else if(S==='onlbg')drawOnlBg();else drawGame();
