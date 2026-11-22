@@ -812,7 +812,7 @@ function selEmb(col,x0,x1){const now=performance.now();if(selPk.length<46)selPk.
 function drawSelect(){const O=OX(),now=performance.now(),te=(now-selT)/1000;bgCover(BGS[0],.28);x.fillStyle='rgba(6,5,10,.55)';x.fillRect(0,0,W,H);
 const cur=selPhase&&oppSel?oppSel:pick;if(selPrev.k!==cur){selPrev={k:cur,t:now}}const tc=(now-selPrev.t)/1000;const col=SELA[pick]||'#ffd23a';
 const two=selPhase&&oppSel;
-if(two){selArt(pick,Math.max(O+150,230),1,9,-1);selArt(oppSel,Math.min(O+650,W-230),1,tc,1);}else selArt(pick,Math.min(O+570,W-235),1,te,1);
+if(two){selArt(pick,Math.max(O+150,230),1,9,-1);selArt(oppSel,Math.min(O+650,W-230),1,tc,1);}else selArt(pick,Math.max(O+230,235),1,te,-1);
 selEmb(SELA[cur]||'#ffd23a',O,O+800);
 if(two){x.save();const vs=eo(Math.min(1,tc/.3));x.translate(O+400,190);x.scale(.6+.4*vs,.6+.4*vs);x.rotate(-.08);x.font='88px '+F;x.textAlign='center';x.textBaseline='middle';x.lineJoin='round';x.lineWidth=14;x.strokeStyle='#000';x.strokeText('VS',0,0);const g=x.createLinearGradient(0,-40,0,40);g.addColorStop(0,'#fff6a0');g.addColorStop(.5,'#ffb020');g.addColorStop(1,'#e02018');x.fillStyle=g;x.shadowColor='#ff6a10';x.shadowBlur=30;x.fillText('VS',0,0);x.restore()}
 const L=CLX().slice();if(!conUnl)L.push('?lock');const n=L.length,ci=Math.max(0,L.indexOf(cur)),tg=-ci*2*Math.PI/n;if(selRot==null)selRot=tg;let dd=tg-selRot;while(dd>Math.PI)dd-=2*Math.PI;while(dd<-Math.PI)dd+=2*Math.PI;selRot+=dd*Math.min(1,.16);
@@ -830,7 +830,7 @@ const drawIt=q=>{const ch=q.ch,f=(q.d+1)/2,r=18+f*f*22,cx=q.x,cy=q.y-r*.6;
  if(on&&!act)tx('1P',cx,cy-r-10,14,'#7dbcff',4,.4+.6*f);if(red)tx('CPU',cx,cy-r-12,16,'#ff8a80',5);else if(act&&!selPhase)tx('1P',cx,cy-r-12,16,'#7dbcff',5);if(ch==='shak'&&f>.5)tx('DUMMY',cx,cy+r+10,11,'#e8b040',4)};it.filter(q=>q.d<0).forEach(drawIt);
 const k1=eo(Math.min(1,te/.35));
 if(two){selDraw(pick,false,O+215,405,1,.86,1,col);const C2=oppSel===pick?altCH(oppSel):CH[oppSel];selDraw(oppSel,oppSel===pick,O+585+(1-eo(Math.min(1,tc/.35)))*90,405,-1,.86,Math.min(1,tc/.2),SELA[oppSel]||'#ff3a2a')}
-else selDraw(pick,false,O+250-(1-k1)*90,405,1,.95,k1,col);
+else selDraw(pick,false,O+570+(1-k1)*90,405,-1,.95,k1,col);
 it.filter(q=>q.d>=0).forEach(drawIt);const C=CH[pick],nm1=C.nm==='B CAINE'?'B. CAINE':C.nm;
 if(two){selName(nm1,SELT[pick],O+24,70,col,9,'left');const C2=CH[oppSel];selName(C2.nm==='B CAINE'?'B. CAINE':C2.nm,SELT[oppSel],O+776,70,SELA[oppSel]||'#ff3a2a',tc,'right')}
 else selName(nm1,SELT[pick],O+28,74,col,te,'left');
@@ -1039,7 +1039,7 @@ tx((i+1)+'.',cols[0],y,19,c,4);tx(String(e.n||'???').slice(0,3),cols[1],y,21,c,4
 if(bTab===2){tx(String(e.r|0),cols[2],y,21,c,4);tx(String(e.w|0),cols[3],y,19,c,4);tx(String(e.l|0),cols[4],y,19,c,4)}
 else{tx(String(e.s|0),cols[2],y,21,c,4);tx(((CH[e.ch]||{}).nm||'?')+(e.w?' ★':''),cols[3],y,16,c,4);tx(String(e.c||0),cols[4],y,19,c,4)}});}
 /* ---------- News-Popup auf dem Startbildschirm ---------- */
-const GAME_V='0.267',NEWS_V='2026-11-arcade';function drawVer(){x.save();x.font='14px '+F;x.textAlign='right';x.textBaseline='bottom';x.lineWidth=4;x.strokeStyle='#000';x.lineJoin='round';x.strokeText('Version '+GAME_V,W-12,H-8);x.fillStyle='#cfc6e6';x.fillText('Version '+GAME_V,W-12,H-8);x.restore()}let newsOpen=true,newsT0=0;try{if(localStorage.getItem('lackpow_news')===NEWS_V)newsOpen=false}catch(e){}
+const GAME_V='0.268',NEWS_V='2026-11-arcade';function drawVer(){x.save();x.font='14px '+F;x.textAlign='right';x.textBaseline='bottom';x.lineWidth=4;x.strokeStyle='#000';x.lineJoin='round';x.strokeText('Version '+GAME_V,W-12,H-8);x.fillStyle='#cfc6e6';x.fillText('Version '+GAME_V,W-12,H-8);x.restore()}let newsOpen=true,newsT0=0;try{if(localStorage.getItem('lackpow_news')===NEWS_V)newsOpen=false}catch(e){}
 function newsClose(never){newsOpen=false;lt=performance.now();if(never){try{localStorage.setItem('lackpow_news',NEWS_V)}catch(e){}}}
 const NEWS=[['ARCADE-MODUS FREIGESCHALTET','Kämpf dich in 7 Kämpfen an die Spitze. Mit Continue, Punkten und Bestenliste.','#ffd23a'],['ENDGEGNER INSTALLIERT','Ganz oben im Turm wartet Lackspatz auf dich.','#ff6a3a'],['GEHEIMER GEGNER INSTALLIERT','Nur wer perfekt kämpft, wird ihn finden ...','#7dffb0']];
 function drawNews(){drawVer();if(!newsOpen)return;const te=(performance.now()-tT)/1000;if(te<2.3){newsT0=0;return}if(!newsT0)newsT0=performance.now();const q=Math.min(1,(performance.now()-newsT0)/350),e=eo(q),O=OX();
